@@ -129,7 +129,7 @@ float4 PS(PSIn i) : SV_TARGET
     private void Run(GpuBurnSettings s)
     {
         IntPtr hwnd = IntPtr.Zero;
-        string cls = "ResetExplodeGpuBurn" + Environment.TickCount64;
+        string cls = "RodrigoTechGpuBurn" + Environment.TickCount64;
         IntPtr hInst = GetModuleHandleW(null);
         var disposables = new List<IDisposable>();
         T Keep<T>(T d) where T : IDisposable { disposables.Add(d); return d; }

@@ -338,7 +338,7 @@ float4 PostPS(FsOut i) : SV_TARGET
         var oldPriority = Thread.CurrentThread.Priority;
         Thread.CurrentThread.Priority = ThreadPriority.Highest; // medição de frametime precisa de pontualidade
         IntPtr hwnd = IntPtr.Zero;
-        string cls = "ResetExplodeGameBench" + Environment.TickCount64;
+        string cls = "RodrigoTechGameBench" + Environment.TickCount64;
         IntPtr hInst = GetModuleHandleW(null);
         var keep = new List<IDisposable>();
         T K<T>(T d) where T : IDisposable { keep.Add(d); return d; }

@@ -252,7 +252,7 @@ public static class MakerDrivers
     {
         var res = BundleResources(c);
         if (res.Count == 0) return $"O driver do {c.Name} não está incluído nesta versão.";
-        string dir = Path.Combine(Path.GetTempPath(), "ResetExplode", "drivers-incluidos", c.Bundle!);
+        string dir = Path.Combine(Path.GetTempPath(), "RodrigoTech", "drivers-incluidos", c.Bundle!);
         if (Directory.Exists(dir)) Directory.Delete(dir, true);
         foreach (var n in res)
         {

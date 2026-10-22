@@ -1040,7 +1040,7 @@
                             <StackPanel>
                                 <TextBlock Text="BACKUP DOS DRIVERS" Style="{StaticResource Label}"/>
                                 <TextBlock Margin="0,10,0,0" TextWrapping="Wrap" Foreground="{DynamicResource Muted}"
-                                           Text="Exporta todos os drivers de terceiros para Documentos\ResetExplode-Drivers. Útil antes de formatar ou de trocar um driver."/>
+                                           Text="Exporta todos os drivers de terceiros para Documentos\RodrigoTech-Drivers. Útil antes de formatar ou de trocar um driver."/>
                                 <Button x:Name="BtnDrvBackup" Style="{StaticResource OutlineButton}" Content="FAZER BACKUP" Padding="18,8" Margin="0,14,0,0"
                                         HorizontalAlignment="Left" Click="BtnDrvBackup_Click"/>
                             </StackPanel>

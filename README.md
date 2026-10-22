@@ -76,4 +76,4 @@ dotnet publish src/RodrigoTech.csproj -c Release -r win-x64 --self-contained tru
 
 ## 📄 Licença
 
-Distribuído sob a licença [MIT](src/LICENSE).
+Distribuído sob a licença [MIT](LICENSE).

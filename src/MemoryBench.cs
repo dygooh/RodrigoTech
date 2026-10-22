@@ -96,7 +96,7 @@ public static class MemoryBench
     /// </summary>
     public static LoadResult MeasureLoading(Action<string, double> progress, CancellationToken ct)
     {
-        string dir = Path.Combine(Path.GetTempPath(), "ResetExplodeBench");
+        string dir = Path.Combine(Path.GetTempPath(), "RodrigoTechBench");
         string drive = Path.GetPathRoot(dir) ?? "";
         try
         {

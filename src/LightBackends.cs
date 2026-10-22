@@ -295,7 +295,7 @@ public sealed class RazerChromaBackend : ILightBackend
         {
             title = "RodrigoTech",
             description = "Controle de iluminação do RodrigoTech",
-            author = new { name = "RodrigoTech", contact = "https://github.com/GustavoReset/ResetExplode" },
+            author = new { name = "RodrigoTech", contact = "https://github.com/dygooh/RodrigoTech" },
             device_supported = Kinds.Select(k => k.Key).ToArray(),
             category = "application",
         });

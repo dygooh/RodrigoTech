@@ -73,11 +73,11 @@ public static class DriverManager
     private static HttpClient CreateClient()
     {
         var c = new HttpClient { Timeout = TimeSpan.FromMinutes(30) };
-        c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) ResetExplode");
+        c.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Windows NT 10.0; Win64; x64) RodrigoTech");
         return c;
     }
 
-    public static string DownloadFolder => Path.Combine(Path.GetTempPath(), "ResetExplode", "drivers");
+    public static string DownloadFolder => Path.Combine(Path.GetTempPath(), "RodrigoTech", "drivers");
 
     // ------------------------------------------------------------------ WMI
 
@@ -438,7 +438,7 @@ public static class DriverManager
     public static async Task<string> BackupAsync(Action<string> progress, CancellationToken ct)
     {
         string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-                                  "ResetExplode-Drivers", DateTime.Now.ToString("yyyyMMdd-HHmm"));
+                                  "RodrigoTech-Drivers", DateTime.Now.ToString("yyyyMMdd-HHmm"));
         Directory.CreateDirectory(dir);
         var psi = new ProcessStartInfo("pnputil.exe", $"/export-driver * \"{dir}\"")
         { UseShellExecute = false, CreateNoWindow = true, RedirectStandardOutput = true };

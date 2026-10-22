@@ -424,7 +424,7 @@ void Main(uint3 id : SV_DispatchThreadID)
         var oldPriority = Thread.CurrentThread.Priority;
         Thread.CurrentThread.Priority = ThreadPriority.Highest;
         IntPtr hwnd = IntPtr.Zero;
-        string cls = "ResetExplodeRtBench" + Environment.TickCount64;
+        string cls = "RodrigoTechRtBench" + Environment.TickCount64;
         IntPtr hInst = GetModuleHandleW(null);
         var keep = new List<IDisposable>();
         T K<T>(T d) where T : IDisposable { keep.Add(d); return d; }
