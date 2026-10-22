@@ -12,7 +12,7 @@
     <RootNamespace>ResetExplode</RootNamespace>
     <AssemblyName>RodrigoTech</AssemblyName>
     <Product>RodrigoTech</Product>
-    <Version>0.17.0</Version>
+    <Version>0.17.1</Version>
     <StartupObject>ResetExplode.Program</StartupObject>
     <DefineConstants>$(DefineConstants);DISABLE_XAML_GENERATED_MAIN</DefineConstants>
     <!-- Sempre otimizado: o BENCH e os stress tests precisam do JIT otimizado também em Debug -->

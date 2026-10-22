@@ -1,3 +1,11 @@
+## Novidades da v0.17.1 — RodrigoTech
+
+**Modo Portátil por Padrão e Gerenciador de Serviço em Segundo Plano**
+- **Sem instalação forçada**: Por padrão, o RodrigoTech roda 100% de forma portátil, sem criar serviços no Windows, sem copiar arquivos para Program Files e sem tarefas agendadas automáticas.
+- **Fechamento limpo**: Ao fechar a janela no modo portátil, o aplicativo encerra seus processos por completo.
+- **Instalar / Desinstalar Serviço**: Novo painel nas abas **Firewall** e **Inicialização** com status em tempo real e botão de 1 clique para instalar ou desinstalar o serviço em segundo plano do Windows (`RodrigoTech`), conforme a preferência do usuário.
+- **Identidade e Documentação**: Remoção completa de referências e arquivos residuais do projeto antigo, consolidando a marca RodrigoTech.
+
 ## Novidades da v0.17.0 — RodrigoTech
 
 **Nova página · FERRAMENTAS › Desinstalador (RevoClean Integrado)**
