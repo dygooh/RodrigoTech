@@ -17,13 +17,8 @@ publish/
 *.userosscache
 *.sln.docstates
 
-# Python / RevoClean build artifacts
-**/__pycache__/
-*.py[cod]
-*$py.class
-RevoClean/build/
-RevoClean/dist/
-RevoClean/*.exe
+# Pasta legada standalone Python do RevoClean
+RevoClean/
 
 # Logs & Temp
 *.log
