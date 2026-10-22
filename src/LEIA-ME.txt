@@ -1,0 +1,20 @@
+RodrigoTech
+===========
+
+Diagnóstico de hardware, otimização, benchmarks e firewall por aplicativo.
+
+REQUISITOS
+- Windows 10 ou 11, 64 bits. Não precisa instalar o .NET (já vem dentro do .exe).
+- Para temperatura e consumo da CPU, instale o driver PawnIO (uma vez só):
+      winget install namazso.PawnIO
+- Aceite o pedido de administrador ao abrir.
+
+COMO USAR
+- Abra o RodrigoTech.exe.
+- Firewall: menu Sistema → Firewall.
+- Overlay: Ctrl + Shift + O liga e desliga.
+- Fechar ou minimizar deixa o app na bandeja, ao lado do relógio.
+
+OBSERVAÇÕES
+- Configurações ficam em %AppData%\RodrigoTech.
+- Use os stress tests com o limite de temperatura ligado e boa ventilação.

@@ -1,0 +1,30 @@
+# Build & Output
+**/bin/
+**/obj/
+dist/
+publish/
+*.exe
+*.dll
+*.pdb
+!src/Drivers/**
+!src/Native/**
+
+# Visual Studio & IDE
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Python / RevoClean build artifacts
+**/__pycache__/
+*.py[cod]
+*$py.class
+RevoClean/build/
+RevoClean/dist/
+RevoClean/*.exe
+
+# Logs & Temp
+*.log
+*.tmp
