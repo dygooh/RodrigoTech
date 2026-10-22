@@ -18,22 +18,13 @@ public partial class App : Application
         base.OnStartup(e);
 
         AdminService.EnsureBaseFilteringEngine();
-        try { ServiceSetup.EnsureInstalled(); }
-        catch (Exception ex)
-        {
-            MessageBox.Show(
-                $"O bloqueio de rede funciona sem o serviço, mas ele não foi instalado.\n{ex.Message}",
-                "RodrigoTech",
-                MessageBoxButton.OK,
-                MessageBoxImage.Warning);
-        }
 
         _tray = new TrayIcon();
         _window = new MainWindow();
         _window.Closing += WindowOnClosing;
         _window.StateChanged += (_, _) =>
         {
-            if (_window.WindowState == WindowState.Minimized)
+            if (_window.WindowState == WindowState.Minimized && (ServiceSetup.IsInstalled() || Program.StartHidden))
                 _window.Hide();
         };
 
@@ -75,9 +66,16 @@ public partial class App : Application
     private void WindowOnClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
         if (_exiting) return;
-        e.Cancel = true;
-        _window?.Hide();
-        _tray?.ShowBalloon("Continua ativo ao lado do relógio.");
+        if (ServiceSetup.IsInstalled() || Program.StartHidden)
+        {
+            e.Cancel = true;
+            _window?.Hide();
+            _tray?.ShowBalloon("Continua ativo ao lado do relógio.");
+        }
+        else
+        {
+            ExitApp();
+        }
     }
 
     private void StartShowListener()

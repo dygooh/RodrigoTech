@@ -8,6 +8,7 @@ public partial class MainWindow
 {
     private void ScanStartup()
     {
+        UpdateServiceStatusUI();
         List<StartupEntry> list;
         try { list = StartupManager.List(); }
         catch (Exception ex) { StartupResult.Text = $"Não foi possível listar: {ex.Message}"; return; }

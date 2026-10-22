@@ -2,6 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace ResetExplode;
@@ -74,7 +75,7 @@ public partial class MainWindow
             RefreshFwTraffic();
             _fwTrafficTimer?.Start();
             FwStatus.Text = $"{_fwApps.Count} aplicativos · {_fwApps.Count(a => a.IsBlocked)} bloqueados";
-            FwEngine.Text = ServiceSetup.StatusText();
+            UpdateServiceStatusUI();
         }
         catch (Exception ex)
         {
@@ -233,5 +234,152 @@ public partial class MainWindow
         FwSearch.Focus();
         FwSearch.SelectAll();
         e.Handled = true;
+    }
+
+    public void UpdateServiceStatusUI()
+    {
+        Dispatcher.Invoke(() =>
+        {
+            bool installed = ServiceSetup.IsInstalled();
+            bool running = installed && ServiceSetup.IsRunning();
+
+            string statusText = ServiceSetup.StatusText();
+            FwEngine.Text = statusText;
+
+            if (!installed)
+            {
+                TxtServiceBadge.Text = "NÃO INSTALADO";
+                TxtServiceBadge.Foreground = (Brush)FindResource("Muted");
+                BadgeServiceStatus.Background = (Brush)FindResource("Line");
+
+                TxtStartupServiceBadge.Text = "NÃO INSTALADO";
+                TxtStartupServiceBadge.Foreground = (Brush)FindResource("Muted");
+                BadgeStartupService.Background = (Brush)FindResource("Line");
+
+                BtnFwServiceToggle.Content = "INSTALAR SERVIÇO";
+                BtnStartupServiceToggle.Content = "INSTALAR SERVIÇO";
+
+                string desc = "Por padrão, o RodrigoTech roda de forma portátil sem instalar nada no sistema. Instale o serviço se desejar que a proteção de rede inicie com o Windows mesmo com o app fechado.";
+                FwServiceDesc.Text = desc;
+                StartupServiceDesc.Text = desc;
+            }
+            else if (running)
+            {
+                TxtServiceBadge.Text = "INSTALADO E ATIVO";
+                TxtServiceBadge.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2E, 0xCC, 0x71));
+                BadgeServiceStatus.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x33, 0x2E, 0xCC, 0x71));
+
+                TxtStartupServiceBadge.Text = "INSTALADO E ATIVO";
+                TxtStartupServiceBadge.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0x2E, 0xCC, 0x71));
+                BadgeStartupService.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x33, 0x2E, 0xCC, 0x71));
+
+                BtnFwServiceToggle.Content = "DESINSTALAR SERVIÇO";
+                BtnStartupServiceToggle.Content = "DESINSTALAR SERVIÇO";
+
+                string desc = "O serviço do Windows está configurado e protege as regras de rede automaticamente ao iniciar o sistema, mesmo com o aplicativo fechado.";
+                FwServiceDesc.Text = desc;
+                StartupServiceDesc.Text = desc;
+            }
+            else
+            {
+                TxtServiceBadge.Text = "INSTALADO (PARADO)";
+                TxtServiceBadge.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xF3, 0x9C, 0x12));
+                BadgeServiceStatus.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x33, 0xF3, 0x9C, 0x12));
+
+                TxtStartupServiceBadge.Text = "INSTALADO (PARADO)";
+                TxtStartupServiceBadge.Foreground = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0xF3, 0x9C, 0x12));
+                BadgeStartupService.Background = new SolidColorBrush(System.Windows.Media.Color.FromArgb(0x33, 0xF3, 0x9C, 0x12));
+
+                BtnFwServiceToggle.Content = "DESINSTALAR SERVIÇO";
+                BtnStartupServiceToggle.Content = "DESINSTALAR SERVIÇO";
+
+                string desc = "O serviço em segundo plano está registrado no Windows, porém encontra-se parado no momento.";
+                FwServiceDesc.Text = desc;
+                StartupServiceDesc.Text = desc;
+            }
+        });
+    }
+
+    private async void BtnFwServiceToggle_Click(object sender, RoutedEventArgs e)
+    {
+        if (!RequireAdmin()) return;
+
+        bool isInstalled = ServiceSetup.IsInstalled();
+
+        if (!isInstalled)
+        {
+            var result = MessageBox.Show(
+                "Deseja instalar o RodrigoTech como serviço em segundo plano do Windows?\n\n" +
+                "• Ele iniciará automaticamente com o Windows para manter as regras de rede ativas.\n" +
+                "• Uma cópia será mantida em Arquivos de Programas.\n" +
+                "• O ícone na bandeja ficará disponível ao lado do relógio.",
+                "Instalar Serviço em Segundo Plano",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                FwLoading.Visibility = Visibility.Visible;
+                await Task.Run(ServiceSetup.Install);
+                UpdateServiceStatusUI();
+                MessageBox.Show(
+                    "Serviço em segundo plano instalado e iniciado com sucesso!",
+                    "RodrigoTech",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Falha ao instalar o serviço:\n{ex.Message}",
+                    "RodrigoTech",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            finally
+            {
+                FwLoading.Visibility = Visibility.Collapsed;
+                UpdateServiceStatusUI();
+            }
+        }
+        else
+        {
+            var result = MessageBox.Show(
+                "Deseja desinstalar o serviço em segundo plano do RodrigoTech?\n\n" +
+                "• O serviço do Windows e a inicialização automática serão excluídos.\n" +
+                "• O aplicativo voltará a operar exclusivamente no modo portátil.",
+                "Desinstalar Serviço em Segundo Plano",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Warning);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                FwLoading.Visibility = Visibility.Visible;
+                await Task.Run(ServiceSetup.Uninstall);
+                UpdateServiceStatusUI();
+                MessageBox.Show(
+                    "Serviço em segundo plano desinstalado com sucesso!\nO RodrigoTech agora opera no modo portátil.",
+                    "RodrigoTech",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    $"Falha ao desinstalar o serviço:\n{ex.Message}",
+                    "RodrigoTech",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+            finally
+            {
+                FwLoading.Visibility = Visibility.Collapsed;
+                UpdateServiceStatusUI();
+            }
+        }
     }
 }

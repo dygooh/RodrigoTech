@@ -97,6 +97,7 @@ public partial class MainWindow : Window
         RefreshDrives();
         TitlePage.Text = "Visão geral";
         UpdateDashboard();
+        UpdateServiceStatusUI();
 
         // A janela aparece já; as coletas pesadas (WMI, sensores, GPU) rodam em paralelo fora da thread da janela.
         Loaded += async (_, _) => await LoadHardwareAsync();

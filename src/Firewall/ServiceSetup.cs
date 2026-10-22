@@ -11,6 +11,20 @@ public static class ServiceSetup
 
     public static string InstalledExe => Path.Combine(InstallDir, "RodrigoTech.exe");
 
+    public static bool IsInstalled()
+    {
+        try
+        {
+            using var service = new ServiceController(FirewallWindowsService.Name);
+            _ = service.Status;
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public static bool IsRunning()
     {
         try
@@ -24,13 +38,21 @@ public static class ServiceSetup
         }
     }
 
-    public static string StatusText() => IsRunning() ? "Serviço ativo (inicia com o Windows)" : "Serviço parado";
+    public static string StatusText()
+    {
+        if (!IsInstalled())
+            return "Modo portátil (sem serviço em segundo plano)";
 
-    public static void EnsureInstalled()
+        return IsRunning()
+            ? "Serviço ativo (inicia com o Windows)"
+            : "Serviço instalado (parado)";
+    }
+
+    public static void Install()
     {
         var current = Environment.ProcessPath;
         if (string.IsNullOrWhiteSpace(current) || !File.Exists(current))
-            throw new InvalidOperationException("Não foi possível localizar o executável.");
+            throw new InvalidOperationException("Não foi possível localizar o executável atual.");
 
         Directory.CreateDirectory(InstallDir);
 
@@ -38,10 +60,11 @@ public static class ServiceSetup
         if (!sameFile)
         {
             TryStop();
+            TerminateInstalledProcesses();
             File.Copy(current, InstalledExe, overwrite: true);
         }
 
-        if (!Exists())
+        if (!IsInstalled())
         {
             RunSc($"create {FirewallWindowsService.Name} binPath= \"\\\"{InstalledExe}\\\" --service\" start= auto DisplayName= \"{FirewallWindowsService.Display}\" depend= BFE");
             RunSc($"description {FirewallWindowsService.Name} \"{FirewallWindowsService.Description}\"");
@@ -56,24 +79,63 @@ public static class ServiceSetup
         EnsureTrayStartup();
     }
 
+    public static void EnsureInstalled() => Install();
+
+    public static void Uninstall()
+    {
+        if (IsInstalled())
+        {
+            TryStop();
+            try { RunSc($"delete {FirewallWindowsService.Name}"); } catch { }
+        }
+
+        try
+        {
+            Run("schtasks.exe", "/Delete /TN \"RodrigoTechTray\" /F");
+        }
+        catch { }
+
+        try
+        {
+            var current = Environment.ProcessPath;
+            if (!string.Equals(current, InstalledExe, StringComparison.OrdinalIgnoreCase))
+            {
+                TerminateInstalledProcesses();
+                if (File.Exists(InstalledExe)) File.Delete(InstalledExe);
+                if (Directory.Exists(InstallDir) && !Directory.EnumerateFileSystemEntries(InstallDir).Any())
+                {
+                    Directory.Delete(InstallDir);
+                }
+            }
+        }
+        catch { }
+    }
+
     public static void EnsureTrayStartup()
     {
         var command = $"\\\"{InstalledExe}\\\" --tray";
         Run("schtasks.exe", $"/Create /TN \"RodrigoTechTray\" /TR \"{command}\" /SC ONLOGON /RL HIGHEST /F");
     }
 
-    private static bool Exists()
+    private static void TerminateInstalledProcesses()
     {
         try
         {
-            using var service = new ServiceController(FirewallWindowsService.Name);
-            _ = service.Status;
-            return true;
+            var currentId = Environment.ProcessId;
+            foreach (var proc in Process.GetProcessesByName("RodrigoTech"))
+            {
+                if (proc.Id != currentId)
+                {
+                    try
+                    {
+                        proc.Kill();
+                        proc.WaitForExit(3000);
+                    }
+                    catch { }
+                }
+            }
         }
-        catch
-        {
-            return false;
-        }
+        catch { }
     }
 
     private static void TryStop()
@@ -88,7 +150,7 @@ public static class ServiceSetup
         }
         catch
         {
-            // ainda não instalado
+            // ainda não instalado ou já parado
         }
     }
 
